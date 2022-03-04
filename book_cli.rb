@@ -134,6 +134,7 @@ class BookCli
 
         puts "Type the word 'back' to view all of your reading lists."
         puts "Type the word 'delete' to delete this list."
+        puts "Type the word 'update' to update this list."
         user_reading_list_options = gets.chomp
 
         case user_reading_list_options
@@ -143,6 +144,8 @@ class BookCli
             get_books_search
         when "delete"
             delete_reading_list("./reading_lists/#{reading_list[reading_list_index.to_i + 1]}")
+        when "update"
+            update_reading_list("./reading_lists/#{reading_list[reading_list_index.to_i + 1]}")
         else
             edge_case_restart_app
         end
@@ -166,7 +169,6 @@ class BookCli
     end
 
     def delete_reading_list(reading_list)
-        # binding.pry
         puts "Are you sure? (Y/N)"
         delete_verification = gets.chomp
         case delete_verification
@@ -187,6 +189,39 @@ class BookCli
             view_all_reading_lists
         end
         
+    end
+
+    def update_reading_list(reading_list)
+        # binding.pry
+        loaded_file = JSON.load(File.read(reading_list))
+        puts "Your loaded file:"
+        puts "\n"
+        puts "1. Name: #{loaded_file["name"]}"
+        puts "2. Description: #{loaded_file["description"]}"
+        puts "\n"
+        puts "Choose which property or properties to edit"
+
+        user_update_list_option = gets.chomp
+
+        case user_update_list_option
+        when "1"
+            puts "What is the new name of your reading list?"
+            new_list_name = gets.chomp
+            loaded_file["name"] = new_list_name
+            new_file_name = new_list_name.downcase.split(" ").join("_") + ".json"
+            binding.pry
+            File.rename(reading_list, "./reading_lists/#{new_file_name}")
+            view_all_reading_lists
+        when "2"
+            puts "What is the new description of your reading list?"
+            new_list_desc = gets.chomp
+            loaded_file["description"] = new_list_desc
+            view_all_reading_lists
+        else
+            view_all_reading_lists
+        end
+
+        binding.pry
     end
 
 end
