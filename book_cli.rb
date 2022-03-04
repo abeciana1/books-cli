@@ -95,13 +95,8 @@ class BookCli
         file_name = new_list_name.downcase.split(" ").join("_") + ".json"
         new_list = File.new("./reading_lists/#{file_name}", "w+")
 
-        puts "\n"
-        puts "Provide a description for your reading list OR press 'Enter' to leave it blank"
-        new_list_desc = gets.chomp
-
         file_data = {
             name: new_list_name,
-            description: new_list_desc,
             books: []
         }
         
@@ -117,7 +112,6 @@ class BookCli
         puts "Importing your reading list"
         puts "..."
         puts "Reading List: #{loaded_file["name"]}"
-        puts "Description: #{loaded_file["description"]}"
         puts "Number of books: #{loaded_file["books"].length}"
         puts "\n"
         puts "\n"
@@ -197,11 +191,15 @@ class BookCli
         puts "Your loaded file:"
         puts "\n"
         puts "1. Name: #{loaded_file["name"]}"
-        puts "2. Description: #{loaded_file["description"]}"
         puts "\n"
         puts "Choose which property or properties to edit"
 
         user_update_list_option = gets.chomp
+
+        new_file_data = {
+            name: loaded_file["name"],
+            books: loaded_file["books"]
+        }
 
         case user_update_list_option
         when "1"
@@ -209,13 +207,14 @@ class BookCli
             new_list_name = gets.chomp
             loaded_file["name"] = new_list_name
             new_file_name = new_list_name.downcase.split(" ").join("_") + ".json"
-            binding.pry
-            File.rename(reading_list, "./reading_lists/#{new_file_name}")
-            view_all_reading_lists
-        when "2"
-            puts "What is the new description of your reading list?"
-            new_list_desc = gets.chomp
-            loaded_file["description"] = new_list_desc
+            File.new("./reading_lists/#{new_file_name}", "w")
+            File.open("./reading_lists/#{new_file_name}", "w") do |file|
+                file.write(JSON.pretty_generate({
+                    name: loaded_file["name"],
+                    books: loaded_file["books"]
+                }))
+            end
+            File.delete(reading_list) if File.exist?(reading_list)
             view_all_reading_lists
         else
             view_all_reading_lists
