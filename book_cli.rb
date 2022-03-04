@@ -176,7 +176,7 @@ class BookCli
 
         puts "Enter the number of the book you want to add to your reading list....'#{loaded_file["name"]}'"
         user_book_selection = gets.chomp
-        if user_book_selection.to_i.is_a?(Integer)
+        if user_book_selection.to_i.is_a?(Integer) && user_book_selection.to_i < 6
             index = user_book_selection.to_i - 1
             new_file_name = loaded_file["name"].downcase.split(" ").join("_") + ".json"
             File.new("./reading_lists/#{new_file_name}", "w")
@@ -186,7 +186,6 @@ class BookCli
                     books: loaded_file["books"] << data["items"][index]
                 }))
             end
-            # File.delete(reading_list) if File.exist?(reading_list)
             view_all_reading_lists
         else
             puts "Invalid entry, you have to choose a number."
