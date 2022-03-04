@@ -77,9 +77,8 @@ class BookCli
             end
             puts "Type the number of the reading list you want to view."
             user_reading_list_select =  gets.chomp
-
             if user_reading_list_select.to_i.is_a?(Integer) && user_reading_list_select.to_i <=valid_reading_list.length - 2
-                get_reading_list(user_reading_list_options)
+                get_reading_list(user_reading_list_select)
             else
                 edge_case_restart_app
             end
@@ -93,13 +92,8 @@ class BookCli
         file_name = new_list_name.downcase.split(" ").join("_") + ".json"
         new_list = File.new("./reading_lists/#{file_name}", "w+")
 
-        puts "\n"
-        puts "Provide a description for your reading list OR press 'Enter' to leave it blank"
-        new_list_desc = gets.chomp
-
         file_data = {
             name: new_list_name,
-            description: new_list_desc,
             books: []
         }
         
@@ -115,7 +109,6 @@ class BookCli
         puts "Importing your reading list"
         puts "..."
         puts "Reading List: #{loaded_file["name"]}"
-        puts "Description: #{loaded_file["description"]}"
         puts "Number of books: #{loaded_file["books"].length}"
         puts "\n"
         puts "\n"
@@ -130,7 +123,9 @@ class BookCli
             end
         end
 
-        puts "Type the word 'back' to view all of your reading lists"
+        puts "Type the word 'back' to view all of your reading lists."
+        puts "Type the word 'delete' to delete this list."
+        puts "Type the word 'update' to update this list."
         user_reading_list_options = gets.chomp
 
         case user_reading_list_options
@@ -138,13 +133,21 @@ class BookCli
             view_all_reading_lists
         when "search"
             get_books_search
+        when "delete"
+            delete_reading_list("./reading_lists/#{reading_list[reading_list_index.to_i + 1]}")
+        when "update"
+            update_reading_list("./reading_lists/#{reading_list[reading_list_index.to_i + 1]}")
         else
             edge_case_restart_app
         end
     end
 
     def get_books_search
-        
+
+        user_search_term = gets.chomp
+
+        HTTParty.get("https://www.googleapis.com/books/v1/volumes?q=#{user_search_term}")
+        binding.pry
     end
 
     def edge_case_restart_app
@@ -157,6 +160,64 @@ class BookCli
             run
         else
             puts "No problem, come back anytime."
+        end
+    end
+
+    def delete_reading_list(reading_list)
+        puts "Are you sure? (Y/N)"
+        delete_verification = gets.chomp
+        case delete_verification
+        when "Y"
+            File.delete(reading_list) if File.exist?(reading_list)
+        when "y"
+            File.delete(reading_list) if File.exist?(reading_list)
+        when "N"
+            puts "We'll move you to the reading lists screen."
+            view_all_reading_lists
+        when "n"
+            puts "We'll move you to the reading lists screen."
+            view_all_reading_lists
+        when "exit"
+            exit
+        else
+            puts "Sorry we didn't catch that."
+            view_all_reading_lists
+        end
+        
+    end
+
+    def update_reading_list(reading_list)
+        loaded_file = JSON.load(File.read(reading_list))
+        puts "Your loaded file:"
+        puts "\n"
+        puts "1. Name: #{loaded_file["name"]}"
+        puts "\n"
+        puts "Choose which property or properties to edit"
+
+        user_update_list_option = gets.chomp
+
+        new_file_data = {
+            name: loaded_file["name"],
+            books: loaded_file["books"]
+        }
+
+        case user_update_list_option
+        when "1"
+            puts "What is the new name of your reading list?"
+            new_list_name = gets.chomp
+            loaded_file["name"] = new_list_name
+            new_file_name = new_list_name.downcase.split(" ").join("_") + ".json"
+            File.new("./reading_lists/#{new_file_name}", "w")
+            File.open("./reading_lists/#{new_file_name}", "w") do |file|
+                file.write(JSON.pretty_generate({
+                    name: loaded_file["name"],
+                    books: loaded_file["books"]
+                }))
+            end
+            File.delete(reading_list) if File.exist?(reading_list)
+            view_all_reading_lists
+        else
+            view_all_reading_lists
         end
     end
 
