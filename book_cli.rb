@@ -77,9 +77,6 @@ class BookCli
             end
             puts "Type the number of the reading list you want to view."
             user_reading_list_select =  gets.chomp
-            # binding.pry
-            # user_reading_list_select.to_i.is_a?(Integer) ? get_reading_list(user_reading_list_options) : edge_case_restart_app
-
             if user_reading_list_select.to_i.is_a?(Integer) && user_reading_list_select.to_i <=valid_reading_list.length - 2
                 get_reading_list(user_reading_list_select)
             else
@@ -146,7 +143,11 @@ class BookCli
     end
 
     def get_books_search
-        
+
+        user_search_term = gets.chomp
+
+        HTTParty.get("https://www.googleapis.com/books/v1/volumes?q=#{user_search_term}")
+        binding.pry
     end
 
     def edge_case_restart_app
@@ -186,7 +187,6 @@ class BookCli
     end
 
     def update_reading_list(reading_list)
-        # binding.pry
         loaded_file = JSON.load(File.read(reading_list))
         puts "Your loaded file:"
         puts "\n"
@@ -219,8 +219,6 @@ class BookCli
         else
             view_all_reading_lists
         end
-
-        binding.pry
     end
 
 end
