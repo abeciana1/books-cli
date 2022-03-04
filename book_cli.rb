@@ -12,7 +12,7 @@ class BookCli
         puts "\n"
         puts "PLEASE REMEMBER ALL COMMANDS ARE CASE SENSITIVE".red
         puts "\n"
-        puts "You may type 'exit' anytime to exit the program. For additional help, please type 'help.'"
+        puts "You may type 'exit' anytime to exit the program."
         user_welcome_input = gets.chomp
 
         case user_welcome_input
@@ -45,10 +45,6 @@ class BookCli
         puts "                    '''"
     end
 
-    def help_menu
-        puts "help"
-    end
-
     def fetch_reading_lists
         if Dir.exists?("reading_lists")
             view_all_reading_lists
@@ -69,12 +65,11 @@ class BookCli
             end
         end
 
-        puts "\n"
         user_reading_list_options = gets.chomp
 
         case user_reading_list_options
         when "create"
-            
+            create_a_reading_list
         when "exit"
             exit
         else
@@ -82,9 +77,18 @@ class BookCli
         end
     end
 
-    def get_reading_list
-        
+    def create_a_reading_list
+        puts "Give your reading list a name."
+        new_list_entry = gets.chomp
+
+        file_name = new_list_entry.downcase.split(" ").join("_") + ".json"
+
+        new_list = File.new("./reading_lists/#{file_name}", "w+")
     end
+
+    # def get_reading_list
+        
+    # end
 
     def edge_case_restart_app
         puts "Sorry we didn't understand the command you entered. Please try again!".red

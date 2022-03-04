@@ -19,12 +19,6 @@ RSpec.describe BookCli do
             expect(subject).respond_to?(:greeting)
         end
 
-        context 'user types "help"' do
-            it 'terminal should be "help"' do
-                allow(subject).to receive(:gets).and_return("help\n")
-                expect{subject.help_menu}.to output("help\n").to_stdout
-            end
-        end
     end
 
     describe '#help_menu' do
@@ -57,11 +51,25 @@ RSpec.describe BookCli do
         end
 
         it 'should tell a user that their list is empty if reading_list has no files' do
+            binding.pry
+            output = capture_standard_output { subject.view_all_reading_lists } 
             if Dir.entries("reading_lists").length < 3
-                expect{subject.view_all_reading_lists}.to output("You currently have no reading lists. Type 'create' to create one.\n").to_stdout
+                expect{output}.to eq("You currently have no reading lists. Type 'create' to create one.\n")
             end
         end
 
+    end
+
+    describe '#create_a_reading_list' do
+        it 'should be defined' do
+            expect(subject).respond_to?(:create_a_reading_list)
+        end
+
+        it 'should create a new json file' do
+            # binding.pry
+            STDIN.should_receive(:gets) { "Test File" }
+            expect(File.exist?("./reading_lists/test_file.json")).to be_truthy
+        end
     end
 
 end
