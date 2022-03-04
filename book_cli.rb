@@ -3,8 +3,8 @@ require 'colorize'
 
 class BookCli
 
-    def self.run
-        BookCli.greeting
+    def run
+        greeting
 
         puts "If this is your first time here, please type 'create' (without quotes) to create a NEW folder for your reading list.".yellow
         puts "\n"
@@ -16,8 +16,10 @@ class BookCli
         user_welcome_input = gets.chomp
 
         case user_welcome_input
+        when "view"
+            fetch_reading_lists
         when "help"
-            BookCli.help_menu
+            help_menu
         else
             puts "Sorry we didn't understand the command you entered. Please try again!".red
             puts "\n"
@@ -25,14 +27,14 @@ class BookCli
             restart = gets.chomp
             if restart == "Y" || restart == "y"
                 puts "Restarting the app now ..."
-                CLI.run
+                run
             else
                 puts "No problem, come back anytime."
             end
         end
     end
 
-    def self.greeting
+    def greeting
         puts " ____ ____ ____ ____ ____ _________ ____ ____ ____ "
         puts "||B |||o |||o |||k |||s |||       |||C |||L |||I ||"
         puts "||__|||__|||__|||__|||__|||_______|||__|||__|||__||"
@@ -50,10 +52,27 @@ class BookCli
         puts "                    '''"
     end
 
-    def self.help_menu
+    def help_menu
         puts "help"
+    end
+
+    def fetch_reading_lists
+        if Dir.exists?("reading_lists")
+            view_all_reading_lists
+        else
+            Dir.mkdir_p "reading_lists"
+        end
+    end
+
+    def view_all_reading_lists
+        
+    end
+
+    def get_reading_list
+        
     end
 
 end
 
-BookCli.run
+book_cli = BookCli.new
+book_cli.run
