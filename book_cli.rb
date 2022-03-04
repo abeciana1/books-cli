@@ -61,7 +61,7 @@ class BookCli
         else
             "Here's your reading list:"
             reading_list.each do |list|
-                binding.pry
+                # binding.pry
             end
         end
 
@@ -82,8 +82,12 @@ class BookCli
         new_list_entry = gets.chomp
 
         file_name = new_list_entry.downcase.split(" ").join("_") + ".json"
-
         new_list = File.new("./reading_lists/#{file_name}", "w+")
+
+        new_list.
+
+        puts "\n"
+        puts "Provide a description for your reading list OR press 'Enter' to leave it blank"
     end
 
     # def get_reading_list
