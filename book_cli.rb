@@ -1,8 +1,13 @@
 require 'pry'
 require 'colorize'
 require 'json'
+require 'httparty'
 
 class BookCli
+
+    def initialize
+        @selected_list = ""
+    end
 
     def run
         greeting
@@ -48,7 +53,7 @@ class BookCli
         if Dir.exists?("reading_lists")
             view_all_reading_lists
         else
-            Dir.mkdir_p "reading_lists"
+            Dir.mkdir "reading_lists"
             view_all_reading_lists
         end
     end
@@ -88,7 +93,7 @@ class BookCli
     def create_a_reading_list
         puts "Give your reading list a name."
         new_list_name = gets.chomp
-
+        
         file_name = new_list_name.downcase.split(" ").join("_") + ".json"
         new_list = File.new("./reading_lists/#{file_name}", "w+")
 
@@ -105,6 +110,8 @@ class BookCli
     def get_reading_list(reading_list_index)
         reading_list = Dir.entries("reading_lists")
         loaded_file = JSON.load(File.read("./reading_lists/#{reading_list[reading_list_index.to_i + 1]}"))
+
+        @selected_list = "./reading_lists/#{reading_list[reading_list_index.to_i + 1]}"
         
         puts "Importing your reading list"
         puts "..."
@@ -119,7 +126,14 @@ class BookCli
             puts "No books in your list currently. Type the word 'search' to add books to your list."
         else
             loaded_file["books"].each_with_index do |book, index|
-                binding.pry
+                book_info = book["volumeInfo"]
+                puts "======"
+                puts "Book ##{index + 1}"
+                puts "Title: #{book_info["title"]}"
+                puts "Description: #{book_info["description"]}"
+                puts "Author: #{book_info["authors"][0]}"
+                puts "Publisher: #{book_info["publisher"]}"
+                puts "======"
             end
         end
 
@@ -143,11 +157,43 @@ class BookCli
     end
 
     def get_books_search
-
+        puts "Type your query here:"
         user_search_term = gets.chomp
 
-        HTTParty.get("https://www.googleapis.com/books/v1/volumes?q=#{user_search_term}")
-        binding.pry
+        data = HTTParty.get("https://www.googleapis.com/books/v1/volumes?q=#{user_search_term}")
+        data["items"].slice(0,5).each_with_index do |book, index|
+            book_info = book["volumeInfo"]
+            puts "======"
+            puts "Book ##{index + 1}"
+            puts "Title: #{book_info["title"]}"
+            puts "Description: #{book_info["description"]}"
+            puts "Author: #{book_info["authors"][0]}"
+            puts "Publisher: #{book_info["publisher"]}"
+            puts "======"
+        end
+
+        loaded_file = JSON.load(File.read(@selected_list))
+
+        puts "Enter the number of the book you want to add to your reading list....'#{loaded_file["name"]}'"
+        user_book_selection = gets.chomp
+        if user_book_selection.to_i.is_a?(Integer)
+            index = user_book_selection.to_i - 1
+            new_file_name = loaded_file["name"].downcase.split(" ").join("_") + ".json"
+            File.new("./reading_lists/#{new_file_name}", "w")
+            File.open("./reading_lists/#{new_file_name}", "w") do |file|
+                file.write(JSON.pretty_generate({
+                    name: loaded_file["name"],
+                    books: loaded_file["books"] << data["items"][index]
+                }))
+            end
+            # File.delete(reading_list) if File.exist?(reading_list)
+            view_all_reading_lists
+        else
+            puts "Invalid entry, you have to choose a number."
+            view_all_reading_lists
+        end
+
+        # binding.pry
     end
 
     def edge_case_restart_app
