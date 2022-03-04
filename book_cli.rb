@@ -77,9 +77,11 @@ class BookCli
             end
             puts "Type the number of the reading list you want to view."
             user_reading_list_select =  gets.chomp
+            # binding.pry
+            # user_reading_list_select.to_i.is_a?(Integer) ? get_reading_list(user_reading_list_options) : edge_case_restart_app
 
             if user_reading_list_select.to_i.is_a?(Integer) && user_reading_list_select.to_i <=valid_reading_list.length - 2
-                get_reading_list(user_reading_list_options)
+                get_reading_list(user_reading_list_select)
             else
                 edge_case_restart_app
             end
@@ -130,7 +132,8 @@ class BookCli
             end
         end
 
-        puts "Type the word 'back' to view all of your reading lists"
+        puts "Type the word 'back' to view all of your reading lists."
+        puts "Type the word 'delete' to delete this list."
         user_reading_list_options = gets.chomp
 
         case user_reading_list_options
@@ -138,6 +141,8 @@ class BookCli
             view_all_reading_lists
         when "search"
             get_books_search
+        when "delete"
+            delete_reading_list("./reading_lists/#{reading_list[reading_list_index.to_i + 1]}")
         else
             edge_case_restart_app
         end
@@ -158,6 +163,30 @@ class BookCli
         else
             puts "No problem, come back anytime."
         end
+    end
+
+    def delete_reading_list(reading_list)
+        # binding.pry
+        puts "Are you sure? (Y/N)"
+        delete_verification = gets.chomp
+        case delete_verification
+        when "Y"
+            File.delete(reading_list) if File.exist?(reading_list)
+        when "y"
+            File.delete(reading_list) if File.exist?(reading_list)
+        when "N"
+            puts "We'll move you to the reading lists screen."
+            view_all_reading_lists
+        when "n"
+            puts "We'll move you to the reading lists screen."
+            view_all_reading_lists
+        when "exit"
+            exit
+        else
+            puts "Sorry we didn't catch that."
+            view_all_reading_lists
+        end
+        
     end
 
 end
