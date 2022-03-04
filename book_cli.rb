@@ -20,17 +20,10 @@ class BookCli
             fetch_reading_lists
         when "help"
             help_menu
+        when "exit"
+            exit
         else
-            puts "Sorry we didn't understand the command you entered. Please try again!".red
-            puts "\n"
-            puts "Would you like to restart the app? (Y/N)"
-            restart = gets.chomp
-            if restart == "Y" || restart == "y"
-                puts "Restarting the app now ..."
-                run
-            else
-                puts "No problem, come back anytime."
-            end
+            edge_case_restart_app
         end
     end
 
@@ -61,15 +54,49 @@ class BookCli
             view_all_reading_lists
         else
             Dir.mkdir_p "reading_lists"
+            view_all_reading_lists
         end
     end
 
     def view_all_reading_lists
-        
+        reading_list = Dir.entries("reading_lists")
+        if reading_list.length < 3
+            puts  "You currently have no reading lists. Type 'create' to create one.\n"
+        else
+            "Here's your reading list:"
+            reading_list.each do |list|
+                binding.pry
+            end
+        end
+
+        puts "\n"
+        user_reading_list_options = gets.chomp
+
+        case user_reading_list_options
+        when "create"
+            
+        when "exit"
+            exit
+        else
+            edge_case_restart_app
+        end
     end
 
     def get_reading_list
         
+    end
+
+    def edge_case_restart_app
+        puts "Sorry we didn't understand the command you entered. Please try again!".red
+        puts "\n"
+        puts "Would you like to restart the app? (Y/N)"
+        restart = gets.chomp
+        if restart == "Y" || restart == "y"
+            puts "Restarting the app now ..."
+            run
+        else
+            puts "No problem, come back anytime."
+        end
     end
 
 end

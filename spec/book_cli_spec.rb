@@ -56,6 +56,11 @@ RSpec.describe BookCli do
             expect(subject).respond_to?(:view_all_reading_lists)
         end
 
+        it 'should tell a user that their list is empty if reading_list has no files' do
+            if Dir.entries("reading_lists").length < 3
+                expect{subject.view_all_reading_lists}.to output("You currently have no reading lists. Type 'create' to create one.\n").to_stdout
+            end
+        end
 
     end
 
