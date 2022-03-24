@@ -22,6 +22,8 @@ class BookCli
         user_welcome_input = gets.chomp
 
         case user_welcome_input
+        when "create"
+            fetch_reading_lists
         when "view"
             fetch_reading_lists
         when "exit"
@@ -191,8 +193,6 @@ class BookCli
             puts "Invalid entry, you have to choose a number."
             view_all_reading_lists
         end
-
-        # binding.pry
     end
 
     def edge_case_restart_app
