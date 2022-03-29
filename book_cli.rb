@@ -86,7 +86,8 @@ class BookCli
             end
             puts "Type the number of the reading list you want to view."
             user_reading_list_select =  gets.chomp
-            if user_reading_list_select.to_i.is_a?(Integer) && user_reading_list_select.to_i <=valid_reading_list.length - 2
+
+            if user_reading_list_select.to_i.is_a?(Integer) && user_reading_list_select.to_i < valid_reading_list.length - 2 && user_reading_list_select.to_i > 0
                 get_reading_list(user_reading_list_select)
             else
                 edge_case_restart_app
