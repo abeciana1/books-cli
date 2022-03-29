@@ -36,7 +36,7 @@ RSpec.describe BookCli do
             it 'terminal should be "view"' do
                 allow($stdin).to receive(:gets).and_return('view')
                 expect($stdin.gets).to eq('view')
-                subject.fetch_reading_lists
+                expect(subject).respond_to?(:fetch_reading_lists)
             end
 
             it 'reading_lists directory should be present' do
