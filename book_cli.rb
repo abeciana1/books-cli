@@ -191,12 +191,6 @@ class BookCli
         else
             run
         end
-        
-        # if @selected_list.length > 1
-        #     add_book_to_reading_list
-        # else
-        #     run
-        # end
     end
 
     def add_book_to_reading_list
