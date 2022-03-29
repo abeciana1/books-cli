@@ -2,6 +2,16 @@
 
 A command line application for book lovers!
 
+## Specs & Gems
+- Ruby version 2.6.1
+- `gem "pry"`
+- `gem "colorize"`
+- `gem "dotenv"`
+- `gem "json"`
+- `gem "rspec"`
+- `gem "httparty"`
+
+
 ## Getting started
 1. Clone the repo down
 ```bash
@@ -10,6 +20,12 @@ $ git clone https://github.com/abeciana1/books-cli
 2. Install the necessary gems
 ```bash
 $ bundle install
+```
+
+## Running tests
+To run the test suite, please execute the following command within the terminal:
+```bash
+$ bundle exec rspec spec/book_cli_spec.rb
 ```
 
 ## Features
