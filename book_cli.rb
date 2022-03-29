@@ -14,7 +14,7 @@ class BookCli
 
         puts "If this is your first time here, please type 'create' (without quotes) to create a NEW folder for your reading list.".yellow
         puts "\n"
-        puts "Otherwise, type 'view' (without quotes) to view your reading list(s)"
+        puts "Otherwise, type 'view' (without quotes) to view your reading list(s) OR type 'search' to search for books."
         puts "\n"
         puts "PLEASE REMEMBER ALL COMMANDS ARE CASE SENSITIVE".red
         puts "\n"
@@ -26,6 +26,8 @@ class BookCli
             fetch_reading_lists
         when "view"
             fetch_reading_lists
+        when "search"
+            get_books_search
         when "exit"
             exit
         else
@@ -174,8 +176,31 @@ class BookCli
             puts "======"
         end
 
-        loaded_file = JSON.load(File.read(@selected_list))
+        puts "Search again? (Y/N)"
+        user_search_again = gets.chomp
 
+        case user_search_again
+        when "y" || "Y"
+            get_books_search
+        when "n" || "N"
+            if @selected_list.length > 1
+                add_book_to_reading_list
+            else
+                run
+            end
+        else
+            run
+        end
+        
+        # if @selected_list.length > 1
+        #     add_book_to_reading_list
+        # else
+        #     run
+        # end
+    end
+
+    def add_book_to_reading_list
+        loaded_file = JSON.load(File.read(@selected_list))
         puts "Enter the number of the book you want to add to your reading list....'#{loaded_file["name"]}'"
         user_book_selection = gets.chomp
         if user_book_selection.to_i.is_a?(Integer) && user_book_selection.to_i < 6
@@ -193,6 +218,7 @@ class BookCli
             puts "Invalid entry, you have to choose a number."
             view_all_reading_lists
         end
+        
     end
 
     def edge_case_restart_app
